@@ -399,9 +399,17 @@ document.getElementById('flyoutPanel').classList.remove('hidden');
 function closeFlyout(){
 document.getElementById('flyoutBackdrop').classList.add('hidden');
 document.getElementById('flyoutPanel').classList.add('hidden');
+stopAllAudio();
+}
+function stopAllAudio(){
+['audioAlerta','audioAlarma'].forEach(function(id){
+var el = document.getElementById(id);
+if(el){ el.pause(); el.currentTime = 0; }
+});
 }
 function showInFlyout(title, html, flashColor){
 stopAnims();
+stopAllAudio();
 document.getElementById('routesLayer').innerHTML='';
 document.getElementById('flyoutTitle').textContent = title;
 document.getElementById('flyoutBody').innerHTML = html;
@@ -790,13 +798,17 @@ html += '<p class="text-'+s.color+'-300 font-semibold mt-1">Qu&eacute; hacer</p>
 s.acciones.forEach(function(a){
 html += '<div class="flex gap-2"><i class="fa-solid fa-check text-'+s.color+'-500 mt-0.5 flex-shrink-0"></i><span class="text-slate-300">'+a+'</span></div>';
 });
-html += '<button onclick="playSenal(\''+key+'\')" class="w-full mt-2 bg-'+s.color+'-700 hover:bg-'+s.color+'-600 text-white font-medium py-2 px-3 rounded-lg flex items-center justify-center gap-2 text-xs transition-all"><i class="fa-solid fa-volume-high"></i> Reproducir Sonido</button>';
+html += '<div class="grid grid-cols-2 gap-2 mt-2">';
+html += '<button onclick="playSenal(\''+key+'\')" class="bg-'+s.color+'-700 hover:bg-'+s.color+'-600 text-white font-medium py-2 px-3 rounded-lg flex items-center justify-center gap-2 text-xs transition-all"><i class="fa-solid fa-volume-high"></i> Reproducir</button>';
+html += '<button onclick="stopAllAudio()" class="bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 px-3 rounded-lg flex items-center justify-center gap-2 text-xs transition-all"><i class="fa-solid fa-stop"></i> Detener</button>';
+html += '</div>';
 html += '<p id="senalStatus" class="text-slate-500 text-[11px] text-center"></p>';
 html += '</div>';
 showInFlyout(s.titulo, html, 'amber');
 }
 function playSenal(key){
 var s = SENALES[key];
+stopAllAudio();
 var audio = document.getElementById(s.audioId);
 var status = document.getElementById('senalStatus');
 audio.play().then(function(){
